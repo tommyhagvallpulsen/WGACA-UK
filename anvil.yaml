@@ -1,19 +1,25 @@
 services:
 - source: /runtime/services/tables.yml
   client_config: {}
-  server_config: {auto_create_missing_columns: true}
+  server_config: {}
+- source: /runtime/services/anvil/users.yml
+  client_config: {use_microsoft: false, use_email: true, allow_remember_me: true,
+    allow_signup: true, enable_automatically: true, confirm_email: false, remember_me_days: 7,
+    use_google: false, use_facebook: false}
+  server_config: {user_table: 48980}
+startup: {type: form, module: HomePage}
 package_name: WGACA
 allow_embedding: true
 name: WGACA
-runtime_options: {version: 2, client_version: '3', server_version: python3-sandbox}
-metadata: {logo_img: 'asset:Emoji Mask.jpg', title: What Goes Around Comes Around,
-  description: 'This app is intended to link good neighbours who might have provisions
-    or medicine they can spare, with people who may be more in need and close enough
-    that delivering by hand or vehicle is an easy option.  When complete, it will
-    attempt to auto-match offers and requests and assign to delivery volunteers and
-    other 3rd sector/governement support groups to help move items around to where
-    they''ve most needed.'}
-startup_form: Home_Page
+runtime_options: {version: 2, client_version: '3', server_version: python3-full}
+metadata: {logo_img: '', title: What Goes Around Comes Around, description: 'This
+    app is intended to link good neighbours who might have provisions or medicine
+    they can spare, with people who may be more in need and close enough that delivering
+    by hand or vehicle is an easy option.  When complete, it will attempt to auto-match
+    offers and requests and assign to delivery volunteers and other 3rd sector/governement
+    support groups to help move items around to where they''ve most needed.'}
+startup_form: HomePage
+native_deps: {head_html: ''}
 dependency_order: []
 dependency_code: {}
 renamed: true
