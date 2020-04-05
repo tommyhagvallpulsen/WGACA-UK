@@ -13,6 +13,7 @@ It’s called WHAT GOES AROUND COMES AROUND (WGACA) which I hope captures the ph
 TECHNOLOGY STACK
 
 •	Python 3.7 - because it’s all I know and I’m planning to have to make this happen on my own if necessary.
+
 •	https://anvil.works/ - because I don’t have time to learn and deploy a scalable web app with database, user authentication, email, and (nice to have) google maps integration and this seems like a fast route to getting something “out there” quickly.
 
 That’s all - as few layers/dependencies as possible.
