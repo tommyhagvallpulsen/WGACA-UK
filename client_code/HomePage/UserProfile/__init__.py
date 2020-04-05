@@ -17,7 +17,7 @@ class UserProfile(UserProfileTemplate):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
         # Any code you write here will run when the form opens.
-        self.privacy_notice.text = TermsOfUse().privacy_notice.text       
+        self.privacy_notice.text = TermsOfUse().privacy_notice.text
         self.terms_accepted.text = "You accepted this Privacy Notice & Terms of Use on "
         self.terms_accepted.text += anvil.users.get_user()['terms_accepted'].strftime('%d %b %Y')
         self.show_my_details()
@@ -48,7 +48,8 @@ class UserProfile(UserProfileTemplate):
         """This method is called when the button is clicked"""
         anvil.users.logout()
         anvil.users.login_with_form()
-        self.__init__()
+        self.parent.parent.__init__()
+        self.parent.parent.menu_my_data_click()
 
     def telephone_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
