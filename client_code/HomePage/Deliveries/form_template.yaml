@@ -1,0 +1,28 @@
+components:
+- type: ColumnPanel
+  properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: '#cae4ff'}
+  name: card_2
+  layout_properties: {grid_position: 'JJJRVK,HNEKEW'}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'This table shows your current deliveries and status:',
+      font_size: null, font: '', spacing_above: small, icon_align: top, spacing_below: small,
+      italic: false, background: '', bold: true, underline: false, icon: 'fa:ambulance'}
+    name: input_description_1
+    layout_properties: {grid_position: 'DTQLRZ,KHKBIM'}
+    event_bindings: {}
+  - type: RepeatingPanel
+    properties: {spacing_above: none, spacing_below: none, item_template: HomePage.Deliveries.DeliveriesRow}
+    name: repeating_panel_1
+    layout_properties: {grid_position: 'LTVKHI,HMENPM', slot: footer}
+container:
+  type: ColumnPanel
+  event_bindings: {}
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: none, col_widths: '{}', spacing_below: none,
+    background: ''}
+is_package: true
+item_type: {table_id: 48778}

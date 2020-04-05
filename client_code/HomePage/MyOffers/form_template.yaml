@@ -1,0 +1,202 @@
+container:
+  type: ColumnPanel
+  event_bindings: {}
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: none, col_widths: '{}', spacing_below: none,
+    background: ''}
+components:
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: content_panel
+  layout_properties:
+    col_widths: {}
+    grid_position: ZNYJZU,DARPKJ
+  components:
+  - type: ColumnPanel
+    properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
+      wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{"BXLQYQ":10,"RRYUZT":10,"YBZOCF":10,"PANIDI":10,"KKXJVW":10,"ABTLSL":10}',
+      spacing_below: small, background: '#cae4ff'}
+    name: card_2
+    layout_properties: {grid_position: 'IWGSSA,BNUBRK'}
+    components:
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: 'Do you have any surplus food, house-hold goods or over-the-counter
+          medicine you can offer to a neighbour in need?  If so, please make an offer
+          so we can match donations with requests and encourage ''runners'' (perhaps
+          you?) to volunteer and deliver spare items to those in need...', font_size: null,
+        font: '', spacing_above: small, icon_align: top, spacing_below: small, italic: false,
+        background: '', bold: true, underline: false, icon: 'fa:heartbeat'}
+      name: input_description_1
+      layout_properties: {grid_position: 'NPEONI,MWORRS'}
+      event_bindings: {}
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: Please choose a product...
+        border: ''
+        enabled: true
+        foreground: ''
+        items: ['']
+        visible: true
+        font_size: null
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: true
+      name: product_description
+      layout_properties: {grid_position: 'TJDTSP,MNMBLJ'}
+      event_bindings: {change: drop_down_1_change}
+      data_bindings:
+      - {property: items, code: self.item_choices}
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: Quantity, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+        underline: false, icon: 'fa:cart-plus'}
+      name: input_description_2
+      layout_properties: {grid_position: 'GWFNTN,BXLQYQ'}
+      event_bindings: {}
+    - type: TextBox
+      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '1',
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: number_of_units
+      layout_properties: {grid_position: 'GWFNTN,RRYUZT'}
+      event_bindings: {}
+    - type: Label
+      properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+        visible: true, text: Units, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+        underline: false, icon: 'fa:balance-scale'}
+      name: input_description_3
+      layout_properties: {grid_position: 'GWFNTN,YBZOCF'}
+      event_bindings: {}
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: items (small)
+        border: ''
+        enabled: true
+        foreground: ''
+        items: ['', '']
+        visible: true
+        font_size: null
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: false
+      name: unit_of_measure
+      layout_properties: {grid_position: 'GWFNTN,PANIDI'}
+      event_bindings: {change: unit_of_measure_change}
+      data_bindings:
+      - {property: selected_value, code: 'self.units_of_measure[0]', writeback: true}
+      - {property: items, code: self.units_of_measure}
+    - type: Label
+      properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+        visible: true, text: Expiry, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+        underline: false, icon: 'fa:hourglass-end'}
+      name: expiry_date_label
+      layout_properties: {grid_position: 'GWFNTN,ABTLSL'}
+      event_bindings: {}
+    - type: DatePicker
+      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: 'If
+          you don''t pick a date, this will automatically be set to 7 days from now.',
+        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
+        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        date: '', min_date: '', background: '', bold: false, underline: false, format: ''}
+      name: expiry_date
+      layout_properties: {grid_position: 'GWFNTN,KKXJVW'}
+      event_bindings: {}
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: Notes, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+        underline: false, icon: 'fa:file-text-o'}
+      name: notes_label
+      layout_properties: {grid_position: 'JGCSDR,BNHZYA'}
+      event_bindings: {}
+    - type: TextArea
+      properties: {role: null, align: left, height: 69.87495372766114, tooltip: '',
+        placeholder: 'Add any additional notes you think might be helpful here.  For
+          example is this suitable for carrying by hand or is a vehicle recommended
+          because of its size or bulk?  Are the items fragile, perishable, opened,
+          or difficult to handle?  These Notes will be publicly viewable, so please
+          DO NOT include any personal information here.', border: '', enabled: true,
+        foreground: '', visible: true, text: '', font_size: null, auto_expand: false,
+        font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+        bold: false, underline: false}
+      name: notes
+      layout_properties: {grid_position: 'LFFFLL,YJWVON'}
+      event_bindings: {change: text_area_1_change}
+    - type: Button
+      properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
+        foreground: '#ffffff', visible: true, text: ' Add Item', font_size: null,
+        font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        background: '#0080c0', bold: false, underline: false, icon: 'fa:plus-square'}
+      name: add_item
+      layout_properties: {grid_position: 'OHAGIL,TKIVSV'}
+      event_bindings: {click: add_item_click}
+    - type: TextArea
+      properties: {role: null, align: left, height: 56.99623260644529, tooltip: '',
+        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
+        text: '', font_size: 12, auto_expand: false, font: '', spacing_above: small,
+        spacing_below: small, italic: false, background: '#eaf4ff', bold: false, underline: false}
+      name: debug_console
+      layout_properties: {grid_position: 'WFZZXD,XRBWYK'}
+      event_bindings: {}
+    event_bindings: {}
+- type: ColumnPanel
+  properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: '#cae4ff'}
+  name: card_1
+  layout_properties: {grid_position: 'OFFJKY,DCRNED'}
+  components:
+  - type: DataGrid
+    properties:
+      role: null
+      columns:
+      - {width: 37, title: '', id: GMBNWP, data_key: show_notes, expand: false}
+      - {width: 373, title: Products & Unit Type, id: HQUPKJ, data_key: product_key,
+        expand: false}
+      - {width: 61, title: Quantity, id: LILUPW, data_key: units, expand: false}
+      - {width: 116, title: Expiry Date, id: FOJVUM, data_key: expiry_date, expand: false}
+      - {width: 44, title: '', id: HYKROV, data_key: delete_row, expand: false}
+      auto_header: true
+      tooltip: ''
+      border: ''
+      foreground: ''
+      rows_per_page: 20
+      visible: true
+      show_page_controls: true
+      spacing_above: small
+      spacing_below: small
+      background: ''
+    name: data_grid_1
+    layout_properties: {grid_position: 'GYIREJ,TDEHID'}
+    components:
+    - type: RepeatingPanel
+      properties: {spacing_above: none, spacing_below: none, item_template: HomePage.MyOffers.MyOffersRow}
+      name: repeating_panel_1
+      layout_properties: {}
+      data_bindings: []
+      event_bindings: {}
+    event_bindings: {}
+    data_bindings: []
+  event_bindings: {}
+is_package: true

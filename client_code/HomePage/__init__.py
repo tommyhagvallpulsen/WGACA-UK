@@ -5,68 +5,52 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ..MyOffers import MyOffers
-from ..UserProfile import UserProfile
-from ..MyRequests import MyRequests
-from ..Matches import Matches
-from ..Deliveries import Deliveries
-from ..UserSetup import UserSetup
-from ..TermsOfUse import TermsOfUse
+from .MyOffers import MyOffers
+from .UserProfile import UserProfile
+from .MyRequests import MyRequests
+from .Matches import Matches
+from .Deliveries import Deliveries
+from .UserSetup import UserSetup
+from .TermsOfUse import TermsOfUse
 
 class HomePage(HomePageTemplate):
     def __init__(self, **properties):
-        anvil.users.login_with_form()
-        # Set Form properties and Data Bindings.
+        # 1st step of registration process requires email and password
+        anvil.users.login_with_form(allow_remembered=True)
         self.fcolour = '#0080c0' # Foreground colour and active menu button background
         self.bcolour = '#cae4ff' # Background colour
         self.xcolour = '#eaf4ff' # Deselected text box
         self.ycolour = '#00a3f0' # Inactive menu button background
+         # Set Form properties and Data Bindings.
         self.init_components(**properties)
         # Any code you write here will run when the form opens.
-#         self.enable_menu_buttons(False)
-        # 2nd step of registration process to force completion of required contact data        
+        #
+        # 2nd step of registration process requires contact data and read/accept Terms of Use
         self.force_user_setup()
     
-    def check_required_fields(self):
-        """
-        Very cursory checks that all fields are completed
-        TODO: Validate by data type and permitted values
-        """
-        checks = [anvil.users.get_user()['house_number']]
-        checks += [anvil.users.get_user()['street']]
-        checks += [anvil.users.get_user()['town']]
-        checks += [anvil.users.get_user()['county']]
-        checks += [anvil.users.get_user()['postcode']]
-        checks += [anvil.users.get_user()['display_name']]
-        checks += [anvil.users.get_user()['telephone']]
+    def required_fields_are_populated(self):
+        """ Checks that all required fields are completed """
+        user = anvil.users.get_user()
+        checks = [user['house_number']]
+        checks += [user['street']]
+        checks += [user['town']]
+        checks += [user['county']]
+        checks += [user['display_name']]
+#         checks += [user['postcode']]        
+#         checks += [user['telephone']]
         return all(checks)
     
     def force_user_setup(self):
-        # Test convenience - resets Will Gaca each time...
-        if anvil.users.get_user()['display_name'] == "Will Gaca":
-            anvil.server.call('details_complete', False)
-            anvil.server.call('terms_accepted', False)
+        """ Blocks until i) Terms of Use accepted; ii) Required contact data supplied """
         while not anvil.users.get_user()['terms_accepted']:
-            alert(content=TermsOfUse(), title = "Step 1: Please read and accept the following Privacy Statement & Terms of Use", large=True,)
-        while not anvil.users.get_user()['details_complete']:
-            alert(content=UserSetup(), title = "Step 2: Please confirm your address Display Name", large=True,)
-            if self.check_required_fields():
-                anvil.server.call("details_complete", True)
+            alert(content=TermsOfUse(), title = "Please read and accept the following Privacy Statement & Terms of Use:", large=True,)
+        while not self.required_fields_are_populated():
+            alert(content=UserSetup(), title = "Please confirm your personal details:", large=True,)
         self.column_panel_1.add_component(MyOffers())
         self.highlight_selected_menu(self.menu_my_offers)
-#         self.enable_menu_buttons(True)
-#             self.column_panel_1.add_component(UserSetup())
-#             self.highlight_selected_menu(self.menu_my_data)
-
-#     def enable_menu_buttons(self, boolean_value):
-#         """ Enables / disables all menu buttons"""
-#         self.menu_my_offers.enabled = boolean_value
-#         self.menu_my_requests.enabled = boolean_value
-#         self.menu_my_matches.enabled = boolean_value
-#         self.menu_my_deliveries.enabled = boolean_value
-#         self.menu_my_data.enabled = boolean_value     
             
-    def highlight_selected_menu(self, selected):        
+    def highlight_selected_menu(self, selected):
+        """ Visual confirmation of currently selected Menu item """
         self.menu_my_offers.background = self.fcolour
         self.menu_my_requests.background = self.fcolour
         self.menu_my_matches.background = self.fcolour
@@ -103,35 +87,35 @@ class HomePage(HomePageTemplate):
         setattr(images[selected], "visible", True)
         
     def menu_my_offers_click(self, **event_args):
-        """This method is called when the link is clicked"""
+        """This method is called when the Offers menu item is clicked"""
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(MyOffers())
         self.highlight_selected_menu(self.menu_my_offers)
         
     def menu_my_requests_click(self, **event_args):
-        """This method is called when the link is clicked"""
+        """This method is called when the Requests menu item is clicked"""
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(MyRequests())
         self.highlight_selected_menu(self.menu_my_requests)
     
     def menu_my_matches_click(self, **event_args):
-        """This method is called when the link is clicked"""
+        """This method is called when the Matches menu item is clicked"""
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(Matches())
         self.highlight_selected_menu(self.menu_my_matches)
         
     def menu_my_deliveries_click(self, **event_args):
-        """This method is called when the link is clicked"""
+        """This method is called when the Deliveries menu item is clicked"""
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(Deliveries())
         self.highlight_selected_menu(self.menu_my_deliveries)        
         
     def menu_my_data_click(self, **event_args):
-        """This method is called when the link is clicked"""
+        """This method is called when the Data menu item is clicked"""
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(UserProfile())
