@@ -40,59 +40,59 @@ def save_to_requests_database(product_category, urgent, notes):
     
 @anvil.server.callable
 def save_user_setup(field, value):
+    """ General purpose save to the User database """
     user = anvil.users.get_user()
     user[field] = value    
 
 @anvil.server.callable
 def get_my_matches():
+    """ Returns rows from the Matches database """
     user = anvil.users.get_user()
     if user is not None:
         return app_tables.matches.search(tables.order_by("accepted"))
+        # TODO: Filter results by proximity
       
 @anvil.server.callable
 def get_my_deliveries():
+    """ Returns rows from the Matches database where runner = user """
     user = anvil.users.get_user()
     if user is not None:
         return app_tables.matches.search(tables.order_by("accepted"), runner = user)
       
 @anvil.server.callable
 def get_my_offers():
+    """ Returns rows from the Offers database for a given user """
     user = anvil.users.get_user()
     if user is not None:
         return app_tables.offers.search(tables.order_by("product_key"), user = user)
       
 @anvil.server.callable
 def get_my_requests():
+    """ Returns rows from the Requests database for a given user """
     user = anvil.users.get_user()
     if user is not None:
         return app_tables.requests.search(tables.order_by("product_category"), user = user)
        
 @anvil.server.callable
 def terms_accepted(boolean_value):
+    """ Records today's date (or None) in the User database for Terms Accepted"""
     user = anvil.users.get_user()
     user['terms_accepted'] = datetime.datetime.today().date() if boolean_value else None
 
 @anvil.server.callable
 def get_address_hierarchy(country = "United Kingdom"):
+    """ Returns an address hierarchy for the given Country """
     global hierarchy
     return hierarchy[country]    
   
 @anvil.server.callable
 def get_units_of_measure():
+    """ Returns a list of valid units of measure """
     global units
     return units.split("\n")
       
 @anvil.server.callable
-def get_product_heirarchy():
+def get_product_hierarchy():
+    """ Returns a product hierarchy """
     global products
     return sorted(products.split("\n"))
-
-@anvil.server.callable
-def update_telephone(telephone):
-    user_row = anvil.users.get_user()
-    try:
-        user_row.update(Telephone = telephone)
-        result = True
-    except:
-        result = False
-    return result

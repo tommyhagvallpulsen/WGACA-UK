@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import datetime
 
-ITEM_HEIRARCHY = anvil.server.call("get_product_heirarchy")
+ITEM_HEIRARCHY = anvil.server.call("get_product_hierarchy")
 UNITS_OF_MEASURE = anvil.server.call("get_units_of_measure")
 
 class MyRequests(MyRequestsTemplate):
@@ -22,7 +22,7 @@ class MyRequests(MyRequestsTemplate):
         self.repeating_panel_1.items = anvil.server.call("get_my_requests")     
     
     def add_to_my_requests(self,product_category, urgent, notes):
-#         user = anvil.users.get_user()['email']
+        """ Add request item to Requests database """          
         result = anvil.server.call("save_to_requests_database", product_category, urgent, notes)
         if result == "Duplicate":
               self.debug_console.text = "ⓘ Unable to create new entry because a request for this category already exists."
@@ -31,7 +31,7 @@ class MyRequests(MyRequestsTemplate):
         self.repeating_panel_1.items = anvil.server.call('get_my_requests')    
 
     def add_request_click(self, **event_args):
-        """This method is called when the button is clicked"""
+        """This method is called when the Add Request button is clicked"""
         product_category = (self.product_category.selected_value)
         urgent = self.urgent.selected
         notes = self.notes.text or "(No notes attached)"
