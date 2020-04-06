@@ -8,8 +8,6 @@ It’s early days and we’re already working on a load of improvements to the a
 
 If it proves popular, my intention is to make the app and the data available to other charities (e.g. food banks), community groups, emergency services and other agencies who are better placed to manage logistics/distribution using the tool.
 
-It’s called WHAT GOES AROUND COMES AROUND (WGACA) which I hope captures the philosophy of helping each other out during a crisis and also the goal of physically moving items around the neighbourhood to where they’re most needed.
-
 TECHNOLOGY STACK
 
 •	Python 3.7 - because it’s all I know and I’m planning to have to make this happen on my own if necessary.

@@ -25,6 +25,7 @@ class UserProfile(UserProfileTemplate):
     def show_my_details(self, **event_args):
         """ Populates User Profile page from User database """
         user = anvil.users.get_user()
+        self.id.text = user.get_id()
         self.display_name.text = user['display_name']
         self.email.text = user['email']
         self.house_number.text = user['house_number']
@@ -64,7 +65,7 @@ class UserProfile(UserProfileTemplate):
 
     def deselect_all_icons(self):
         """ Set all icons to unselected """
-        components = [self.help1, self.help2, self.help3,
+        components = [self.help0, self.help1, self.help2, self.help3,
                       self.help4, self.help5, self.help6,
                       self.help7, self.help8, self.help9]
         for component in components:
@@ -85,6 +86,14 @@ class UserProfile(UserProfileTemplate):
         anvil.server.call("save_user_setup", field, value)
         self.help_text.text = f"Your new {field.title()} details are: {value or '<empty>'}"
 
+    def expand_privacy_notice(self, **event_args):
+      """This method is called when the link is clicked"""
+      if self.label_privacy.icon == "fa:caret-down":
+          self.privacy_notice.visible = True
+          self.label_privacy.icon = "fa:caret-up"
+      else:
+          self.privacy_notice.visible = False
+          self.label_privacy.icon = "fa:caret-down"
 
 
 

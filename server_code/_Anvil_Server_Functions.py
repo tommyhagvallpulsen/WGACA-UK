@@ -4,9 +4,10 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 import datetime
-from .Product_Data import products
-from .Unit_Data import units
-# Change import for other countries' address data:
+
+# Change imports for other countries' data:
+from .Product_Data_UK import products
+from .Unit_Data_UK import units
 from .Address_Data_UK import hierarchy
 
 # This is a server module. It runs on the Anvil server,
@@ -14,6 +15,92 @@ from .Address_Data_UK import hierarchy
 #
 # To allow anvil.server.call() to call functions here, we mark
 # them with @anvil.server.callable.
+
+@anvil.server.callable
+def check_for_display_name(display_name):
+    """ Returns boolean check for whether display name already exists in Users database"""
+    return True if app_tables.users.get(display_name = display_name) else False
+
+@anvil.server.callable
+def generate_matches():
+    """
+    Compares Offers and Requests and saves matches (by product and area) to Matches database.
+    Current version matches by Town.  TODO: Match by actual distance,
+    as for some addresses the other side of the road is a different Town!
+    """
+    requests = app_tables.requests.search(tables.order_by("product_category"), status = "New")
+    offers = app_tables.offers.search(tables.order_by("product_key"), status = "New")
+    matches = 0
+    nuluser = app_tables.users.get(display_name="Nuluser")
+    for request in requests:
+        for offer in offers:
+            if request['product_category'] in offer['product_key']:
+                if request['user']['display_name'] != offer['user']['display_name']:
+                    # check if new or existing match
+                    new_match = app_tables.matches.get(request=request, offer=offer) or app_tables.matches.add_row(request=request, available_runners = [], offer=offer, status="New")
+    # Assign Offer to earliest Requests first  
+
+@anvil.server.callable
+def get_address_hierarchy(country = "United Kingdom"):
+    """ Returns an address hierarchy for the given Country """
+    global hierarchy
+    return hierarchy[country]    
+  
+@anvil.server.callable
+def get_my_deliveries():
+    """ Returns rows from the Matches database where runner = user """
+    user = anvil.users.get_user()
+    if user is not None:
+        return app_tables.matches.search(tables.order_by("status"), approved_runner = user)
+
+@anvil.server.callable
+def get_my_matches():
+    """ Returns rows from the Matches database """
+    user = anvil.users.get_user()
+    if user is not None:
+        return app_tables.matches.search(tables.order_by("status"),approved_runner=None)
+        # When approved_runner != None, the Match effectively becomes a Delivery
+        # TODO: Filter results by proximity
+
+@anvil.server.callable
+def get_my_offers():
+    """ Returns rows from the Offers database for a given user """
+    user = anvil.users.get_user()
+    if user is not None:
+        return app_tables.offers.search(tables.order_by("product_key"), user = user)
+  
+@anvil.server.callable
+def get_my_requests():
+    """ Returns rows from the Requests database for a given user """
+    user = anvil.users.get_user()
+    if user is not None:
+        return app_tables.requests.search(tables.order_by("product_category"), user = user)
+       
+@anvil.server.callable
+def get_product_hierarchy():
+    """ Returns a product hierarchy """
+    global products
+    return sorted(products.split("\n"))
+
+@anvil.server.callable
+def get_units_of_measure():
+    """ Returns a list of valid units of measure """
+    global units
+    return units.split("\n")
+
+@anvil.server.callable
+def remove_orphan_matches(request_or_offer):
+    """ Deletes a Match where the child Request or Offer has just been deleted """
+    try:
+        for match in app_tables.matches.search(request=request_or_offer):
+            match.delete()
+    except anvil.tables.TableError:
+        pass
+    try:
+        for match in app_tables.matches.search(offer=request_or_offer):
+            match.delete()
+    except anvil.tables.TableError:
+        pass
 
 @anvil.server.callable
 def save_to_offers_database(product_key, units, expiry_date, notes):
@@ -27,6 +114,7 @@ def save_to_offers_database(product_key, units, expiry_date, notes):
         return "Duplicate"    
     app_tables.offers.add_row(status='New',product_key=product_key, notes = str(notes), expiry_date = expiry_date, units=units, user=user, date_posted=datetime.datetime.today().date())
 
+ 
 @anvil.server.callable
 def save_to_requests_database(product_category, urgent, notes):
     """ Returns 'Duplicate' if product_category request already exists"""
@@ -43,36 +131,7 @@ def save_user_setup(field, value):
     """ General purpose save to the User database """
     user = anvil.users.get_user()
     user[field] = value    
-
-@anvil.server.callable
-def get_my_matches():
-    """ Returns rows from the Matches database """
-    user = anvil.users.get_user()
-    if user is not None:
-        return app_tables.matches.search(tables.order_by("accepted"))
-        # TODO: Filter results by proximity
-      
-@anvil.server.callable
-def get_my_deliveries():
-    """ Returns rows from the Matches database where runner = user """
-    user = anvil.users.get_user()
-    if user is not None:
-        return app_tables.matches.search(tables.order_by("accepted"), runner = user)
-      
-@anvil.server.callable
-def get_my_offers():
-    """ Returns rows from the Offers database for a given user """
-    user = anvil.users.get_user()
-    if user is not None:
-        return app_tables.offers.search(tables.order_by("product_key"), user = user)
-      
-@anvil.server.callable
-def get_my_requests():
-    """ Returns rows from the Requests database for a given user """
-    user = anvil.users.get_user()
-    if user is not None:
-        return app_tables.requests.search(tables.order_by("product_category"), user = user)
-       
+  
 @anvil.server.callable
 def terms_accepted(boolean_value):
     """ Records today's date (or None) in the User database for Terms Accepted"""
@@ -80,19 +139,10 @@ def terms_accepted(boolean_value):
     user['terms_accepted'] = datetime.datetime.today().date() if boolean_value else None
 
 @anvil.server.callable
-def get_address_hierarchy(country = "United Kingdom"):
-    """ Returns an address hierarchy for the given Country """
-    global hierarchy
-    return hierarchy[country]    
-  
-@anvil.server.callable
-def get_units_of_measure():
-    """ Returns a list of valid units of measure """
-    global units
-    return units.split("\n")
-      
-@anvil.server.callable
-def get_product_hierarchy():
-    """ Returns a product hierarchy """
-    global products
-    return sorted(products.split("\n"))
+def volunteer_as_runner(match, boolean_value):
+    """ Volunteer/unvolunteer as available_runner in Matches"""
+    user =anvil.users.get_user()
+    if boolean_value:
+        match['available_runners'] += [user]
+    else:
+        match["available_runners"] = [x for x in match["available_runners"] if x != user]

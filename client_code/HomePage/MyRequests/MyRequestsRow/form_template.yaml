@@ -19,4 +19,11 @@ components:
   event_bindings: {}
   data_bindings:
   - {property: text, code: 'self.item[''date_posted''].strftime(''%d %b %Y'')'}
+- type: Label
+  properties: {}
+  name: status
+  layout_properties: {column: RECBJX}
+  event_bindings: {}
+  data_bindings:
+  - {property: text, code: 'self.item[''status'']'}
 is_package: true

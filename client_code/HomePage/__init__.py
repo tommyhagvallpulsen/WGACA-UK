@@ -12,11 +12,10 @@ from .Matches import Matches
 from .Deliveries import Deliveries
 from .UserSetup import UserSetup
 from .TermsOfUse import TermsOfUse
+from .AboutThisApp import AboutThisApp
 
 class HomePage(HomePageTemplate):
     def __init__(self, **properties):
-        # 1st step of registration process requires email and password
-        anvil.users.login_with_form(allow_remembered=True)
         self.fcolour = '#0080c0' # Foreground colour and active menu button background
         self.bcolour = '#cae4ff' # Background colour
         self.xcolour = '#eaf4ff' # Deselected text box
@@ -24,7 +23,12 @@ class HomePage(HomePageTemplate):
          # Set Form properties and Data Bindings.
         self.init_components(**properties)
         # Any code you write here will run when the form opens.
-        #
+        self.column_panel_1.add_component(AboutThisApp())
+        self.highlight_selected_menu(self.menu_about)
+        
+    def check_permissions(self):
+        # 1st step of registration process requires email and password
+        anvil.users.login_with_form(allow_remembered=True)
         # 2nd step of registration process requires contact data and read/accept Terms of Use
         self.force_user_setup()
     
@@ -46,8 +50,8 @@ class HomePage(HomePageTemplate):
             alert(content=TermsOfUse(), title = "Please read and accept the following Privacy Statement & Terms of Use:", large=True,)
         while not self.required_fields_are_populated():
             alert(content=UserSetup(), title = "Please confirm your personal details:", large=True,)
-        self.column_panel_1.add_component(MyOffers())
-        self.highlight_selected_menu(self.menu_my_offers)
+#         self.column_panel_1.add_component(MyOffers())
+#         self.highlight_selected_menu(self.menu_my_offers)
             
     def highlight_selected_menu(self, selected):
         """ Visual confirmation of currently selected Menu item """
@@ -76,7 +80,8 @@ class HomePage(HomePageTemplate):
         selected.bold = True
         selected.font_size = 12
         # Hide all images
-        images = {self.menu_my_offers: self.image_1,
+        images = {self.menu_about: self.image_0,
+                  self.menu_my_offers: self.image_1,
                   self.menu_my_requests: self.image_2,
                   self.menu_my_matches: self.image_3,
                   self.menu_my_deliveries: self.image_4,
@@ -88,6 +93,7 @@ class HomePage(HomePageTemplate):
         
     def menu_my_offers_click(self, **event_args):
         """This method is called when the Offers menu item is clicked"""
+        self.check_permissions()
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(MyOffers())
@@ -95,6 +101,7 @@ class HomePage(HomePageTemplate):
         
     def menu_my_requests_click(self, **event_args):
         """This method is called when the Requests menu item is clicked"""
+        self.check_permissions()
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(MyRequests())
@@ -102,6 +109,7 @@ class HomePage(HomePageTemplate):
     
     def menu_my_matches_click(self, **event_args):
         """This method is called when the Matches menu item is clicked"""
+        self.check_permissions()
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(Matches())
@@ -109,6 +117,7 @@ class HomePage(HomePageTemplate):
         
     def menu_my_deliveries_click(self, **event_args):
         """This method is called when the Deliveries menu item is clicked"""
+        self.check_permissions()
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(Deliveries())
@@ -116,10 +125,21 @@ class HomePage(HomePageTemplate):
         
     def menu_my_data_click(self, **event_args):
         """This method is called when the Data menu item is clicked"""
+        self.check_permissions()
         self.column_panel_1.clear()
         # Add Page1 to the content panel
         self.column_panel_1.add_component(UserProfile())
         self.highlight_selected_menu(self.menu_my_data)
+
+    def menu_about_click(self, **event_args):
+        """This method is called when the About button is clicked"""
+        self.check_permissions()
+        self.column_panel_1.clear()
+        # Add Page1 to the content panel
+        self.column_panel_1.add_component(AboutThisApp())
+        self.highlight_selected_menu(self.menu_about)
+
+
 
 
 

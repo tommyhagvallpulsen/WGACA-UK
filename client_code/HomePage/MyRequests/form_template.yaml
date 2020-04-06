@@ -64,13 +64,13 @@ components:
         include_placeholder: true
       name: product_category
       layout_properties: {grid_position: 'TJDTSP,MNMBLJ'}
-      event_bindings: {change: drop_down_1_change}
+      event_bindings: {change: drop_down_change}
       data_bindings:
       - {property: items, code: 'list(set([" | ".join(x.split(" | ")[:2]) for x in
           self.item_choices]))'}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Notes, font_size: null, font: '', spacing_above: small,
+        visible: true, text: 'Notes:', font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
         underline: false, icon: 'fa:file-text-o'}
       name: notes_label
@@ -88,7 +88,7 @@ components:
         spacing_below: small, italic: false, background: '', bold: false, underline: false}
       name: notes
       layout_properties: {grid_position: 'LFFFLL,YJWVON'}
-      event_bindings: {change: text_area_1_change}
+      event_bindings: {}
     - type: Button
       properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
         foreground: '#ffffff', visible: true, text: ' Add Request', font_size: null,
@@ -104,6 +104,7 @@ components:
         spacing_below: small, italic: false, background: '#eaf4ff', bold: false, underline: false}
       name: debug_console
       layout_properties: {grid_position: 'WFZZXD,XRBWYK'}
+      event_bindings: {}
     event_bindings: {}
 - type: ColumnPanel
   properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
@@ -120,7 +121,8 @@ components:
       - {width: 59, title: Urgent, id: TUJLMD, data_key: urgent, expand: false}
       - {width: 170, title: Product Category, id: FQJNEU, data_key: product_category,
         expand: false}
-      - {width: 337, title: Notes, id: PPCIVS, data_key: notes, expand: false}
+      - {width: 229, title: Notes, id: PPCIVS, data_key: notes, expand: false}
+      - {width: 103, title: Status, id: RECBJX, data_key: status, expand: false}
       - {width: 43, title: '', id: KTZWSC, data_key: delete_row, expand: false}
       auto_header: true
       tooltip: ''
