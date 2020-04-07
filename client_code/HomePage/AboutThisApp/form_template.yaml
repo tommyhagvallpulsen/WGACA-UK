@@ -12,7 +12,7 @@ components:
   event_bindings: {}
 - type: ColumnPanel
   properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
-    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{"SVIZUH":15}',
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{"SVIZUH":10,"GXURPI":37}',
     spacing_below: small, background: '#cae4ff'}
   name: about_this_app
   layout_properties:
@@ -45,9 +45,10 @@ components:
         \ and accept our Privacy Notice and Terms of Use, and setup your address and\
         \ Display Name for the app to use.  That should take less than a minute.\n\
         \nWe hope you find this tool useful, and wish you all the best for coping\
-        \ during these difficult times.\n      \nPS If you're interested in setting\
-        \ up a local version of this app in your own country, you can find the source\
-        \ code at:", font_size: null, font: '', spacing_above: small, icon_align: left,
+        \ during these difficult times.\n     \nPS We couldn't have done this without\
+        \ the generous support of Anvil.Works.  Thank you! \nPPS If you're interested\
+        \ in setting up a local version of this app in your own country, you can find\
+        \ the source code at:", font_size: null, font: '', spacing_above: small, icon_align: left,
       spacing_below: none, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: label_1
@@ -74,9 +75,9 @@ components:
     layout_properties: {grid_position: 'OMXSGE,SVIZUH'}
   - type: Button
     properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
-      foreground: '#ffffff', visible: true, text: 'CONTACT US  ', font_size: 24, font: '',
+      foreground: '#ffffff', visible: true, text: Contact Us, font_size: 24, font: '',
       spacing_above: large, icon_align: top, spacing_below: small, italic: false,
-      background: '#0080c0', bold: false, underline: false, icon: 'fa:commenting'}
+      background: '#5eb348', bold: false, underline: false, icon: 'fa:commenting'}
     name: contact_us
     layout_properties: {grid_position: 'OMXSGE,GXURPI'}
     event_bindings: {click: contact_us_click}

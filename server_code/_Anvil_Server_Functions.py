@@ -28,17 +28,22 @@ def generate_matches():
     Current version matches by Town.  TODO: Match by actual distance,
     as for some addresses the other side of the road is a different Town!
     """
-    requests = app_tables.requests.search(tables.order_by("product_category"), status = "New")
-    offers = app_tables.offers.search(tables.order_by("product_key"), status = "New")
+    requests = app_tables.requests.search(tables.order_by("product_category"))
+    offers = app_tables.offers.search(tables.order_by("product_key"))
     matches = 0
-    nuluser = app_tables.users.get(display_name="Nuluser")
-    for request in requests:
-        for offer in offers:
+#     print("Generating Matches...")
+    statuses = anvil.server.call("STATUSES")
+    for request in (x for x in requests if x['status'] not in statuses):
+        for offer in (x for x in offers if x['status'] not in statuses):
             if request['product_category'] in offer['product_key']:
                 if request['user']['display_name'] != offer['user']['display_name']:
                     # check if new or existing match
-                    new_match = app_tables.matches.get(request=request, offer=offer) or app_tables.matches.add_row(request=request, available_runners = [], offer=offer, status="New")
-    # Assign Offer to earliest Requests first  
+                    new_match = app_tables.matches.get(request=request, offer=offer) or app_tables.matches.add_row(available_runners = [], request = request, offer=offer, status="New")
+                    # 'or []' added to address possible database corruption i.e. value = None rather than value = []
+                    if new_match not in (offer['matches'] or []):
+                        offer['matches'] = (offer['matches'] or []) + [new_match]
+                    if new_match not in (request['matches'] or []):
+                        request['matches'] = (request['matches'] or []) + [new_match]
 
 @anvil.server.callable
 def get_address_hierarchy(country = "United Kingdom"):
@@ -87,6 +92,11 @@ def get_units_of_measure():
     """ Returns a list of valid units of measure """
     global units
     return units.split("\n")
+  
+@anvil.server.callable
+def get_user_from_display_name(display_name):
+    """ Returns a User (row) object based on display_name string """
+    return app_tables.users.get(display_name=display_name)
 
 @anvil.server.callable
 def remove_orphan_matches(request_or_offer):
@@ -103,6 +113,14 @@ def remove_orphan_matches(request_or_offer):
         pass
 
 @anvil.server.callable
+def save_to_matches_database(match, runner, messages, status):
+    """ Returns 'Duplicate' if product_category request already exists"""
+    user = anvil.users.get_user()
+    if user is None:
+        return
+    match.update(approved_runner = runner, messages_dict = messages, status = status)
+    
+@anvil.server.callable
 def save_to_offers_database(product_key, units, expiry_date, notes):
     """ Returns 'Duplicate' if product_key/expiry date row already exists"""
     product_key = " … ".join(product_key)
@@ -112,8 +130,7 @@ def save_to_offers_database(product_key, units, expiry_date, notes):
     existing_entry = app_tables.offers.get(product_key=product_key, expiry_date=expiry_date, user = user)
     if existing_entry:
         return "Duplicate"    
-    app_tables.offers.add_row(status='New',product_key=product_key, notes = str(notes), expiry_date = expiry_date, units=units, user=user, date_posted=datetime.datetime.today().date())
-
+    app_tables.offers.add_row(status='New',product_key=product_key, notes = str(notes), expiry_date = expiry_date, units=units, user=user, date_posted=datetime.datetime.today().date(), matches = [])
  
 @anvil.server.callable
 def save_to_requests_database(product_category, urgent, notes):
@@ -124,13 +141,18 @@ def save_to_requests_database(product_category, urgent, notes):
     existing_entry = app_tables.requests.get(product_category=product_category, user = user)
     if existing_entry:
         return "Duplicate"    
-    app_tables.requests.add_row(status='New', product_category=product_category, urgent = urgent, user = user, notes = str(notes), date_posted=datetime.datetime.today().date())    
+    app_tables.requests.add_row(status='New', product_category=product_category, urgent = urgent, user = user, notes = str(notes), date_posted=datetime.datetime.today().date(), matches = [])    
     
 @anvil.server.callable
 def save_user_setup(field, value):
     """ General purpose save to the User database """
     user = anvil.users.get_user()
-    user[field] = value    
+    user[field] = value
+  
+@anvil.server.callable
+def STATUSES():
+    """ Returns allowable status descriptions other than 'New' or 'X matches found' """
+    return "Awaiting Pickup, Pickup Failed, Awaiting Delivery, Delivery Failed, Delivery Complete".split(", ")
   
 @anvil.server.callable
 def terms_accepted(boolean_value):
@@ -139,9 +161,23 @@ def terms_accepted(boolean_value):
     user['terms_accepted'] = datetime.datetime.today().date() if boolean_value else None
 
 @anvil.server.callable
+def update_offers_status(offer, status):
+    user = anvil.users.get_user()
+    if user is None:
+        return
+    offer.update(status = status)
+    
+@anvil.server.callable
+def update_requests_status(request, status):
+    user = anvil.users.get_user()
+    if user is None:
+        return
+    request.update(status = status)
+    
+@anvil.server.callable
 def volunteer_as_runner(match, boolean_value):
     """ Volunteer/unvolunteer as available_runner in Matches"""
-    user =anvil.users.get_user()
+    user = anvil.users.get_user()
     if boolean_value:
         match['available_runners'] += [user]
     else:
