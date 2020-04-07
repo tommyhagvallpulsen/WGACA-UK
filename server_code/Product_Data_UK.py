@@ -1,3 +1,4 @@
+import anvil.email
 products =  """Children's Items | Board Games / Puzzles
 Children's Items | Exercise Books
 Children's Items | Paper, lined

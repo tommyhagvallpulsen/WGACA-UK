@@ -22,6 +22,7 @@ class HomePage(HomePageTemplate):
         self.ycolour = '#00a3f0' # Inactive menu button background
          # Set Form properties and Data Bindings.
         self.init_components(**properties)
+#         Notification("Feedback submitted!").show()
         # Any code you write here will run when the form opens.
         self.column_panel_1.add_component(AboutThisApp())
         self.highlight_selected_menu(self.menu_about)

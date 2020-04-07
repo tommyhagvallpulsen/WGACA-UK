@@ -1,3 +1,4 @@
+import anvil.email
 hierarchy = {"United Kingdom":
                {"Wandsworth, London":
                    {"Putney":
